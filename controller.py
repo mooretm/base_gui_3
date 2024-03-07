@@ -22,6 +22,8 @@ from tkinter import messagebox
 
 # Import system packages
 from pathlib import Path
+import os
+from datetime import datetime
 
 # Import misc packages
 import webbrowser
@@ -93,6 +95,9 @@ class Application(tk.Tk):
 
         # Start with an invalid response
         self.response = 999
+
+        # Set first run flag to True
+        self.first_run_flag = True
 
         # Load current session parameters from file
         # or load defaults if file does not exist yet
@@ -220,118 +225,18 @@ class Application(tk.Tk):
             f"{self.matrix.shape[0]}")
 
 
+    def _create_filename(self):
+        """ Create file name and path. """
+        datestamp = datetime.now().strftime("%Y_%b_%d_%H%M")
+        self.filename = f"{self.sessionpars['subject'].get()}_\
+            {self.sessionpars['condition'].get()}_{datestamp}.csv"
+        # return filename
+
+
     def _quit(self):
         """ Exit the application.
         """
         self.destroy()
-
-
-    ###################
-    # Audio Functions #
-    ###################
-    def present_audio(self, audio, pres_level, **kwargs):
-        # Load audio
-        try:
-            self._create_audio_object(audio, **kwargs)
-        except audio_exceptions.InvalidAudioType as e:
-            messagebox.showerror(
-                title="Invalid Audio Type",
-                message="The audio type is invalid!",
-                detail=f"{e} Please provide a Path or ndarray object."
-            )
-            return
-        except audio_exceptions.MissingSamplingRate as e:
-            messagebox.showerror(
-                title="Missing Sampling Rate",
-                message="No sampling rate was provided!",
-                detail=f"{e} Please provide a Path or ndarray object."
-            )
-            return
-
-        # Play audio
-        self._play(pres_level)
-
-
-    def _create_audio_object(self, audio, **kwargs):
-        # Create audio object
-        try:
-            self.a = audiomodel.Audio(
-                audio=audio,
-                **kwargs
-            )
-        except FileNotFoundError:
-            messagebox.showerror(
-                title="File Not Found",
-                message="Cannot find the audio file!",
-                detail="Go to File>Session to specify a valid audio path."
-            )
-            self._show_session_dialog()
-            return
-        except audio_exceptions.InvalidAudioType:
-            raise
-        except audio_exceptions.MissingSamplingRate:
-            raise
-
-
-    def _play(self, pres_level):
-        """ Format channel routing, present audio and catch 
-            exceptions.
-        """
-        # Attempt to present audio
-        try:
-            self.a.play(
-                level=pres_level,
-                device_id=self.sessionpars['audio_device'].get(),
-                routing=self._format_routing(
-                    self.sessionpars['channel_routing'].get())
-            )
-        except audio_exceptions.InvalidAudioDevice as e:
-            print(e)
-            messagebox.showerror(
-                title="Invalid Device",
-                message="Invalid audio device! Go to Tools>Audio Settings " +
-                    "to select a valid audio device.",
-                detail = e
-            )
-            # Open Audio Settings window
-            self._show_audio_dialog()
-        except audio_exceptions.InvalidRouting as e:
-            print(e)
-            messagebox.showerror(
-                title="Invalid Routing",
-                message="Speaker routing must correspond with the " +
-                    "number of channels in the audio file! Go to " +
-                    "Tools>Audio Settings to update the routing.",
-                detail=e
-            )
-            # Open Audio Settings window
-            self._show_audio_dialog()
-        except audio_exceptions.Clipping:
-            print("controller: Clipping has occurred! Aborting!")
-            messagebox.showerror(
-                title="Clipping",
-                message="The level is too high and caused clipping.",
-                detail="The waveform will be plotted when this message is " +
-                    "closed for visual inspection."
-            )
-            self.a.plot_waveform("Clipped Waveform")
-
-
-    def stop_audio(self):
-        try:
-            self.a.stop()
-        except AttributeError:
-            print("\ncontroller: Stop called, but there is no audio object!")
-
-
-    def _format_routing(self, routing):
-        """ Convert space-separated string to list of ints
-            for speaker routing.
-        """
-        routing = routing.split()
-        routing = [int(x) for x in routing]
-
-        return routing
 
 
     ###################
@@ -344,6 +249,10 @@ class Application(tk.Tk):
             Create stimulus model.
             Present first trial.
         """
+        # Create date-stamped file name on start
+        if self.first_run_flag:
+            self._create_filename()
+
         # Create trial counter
         self.trial_counter = 0
 
@@ -624,6 +533,114 @@ class Application(tk.Tk):
 
         # Open README in default web browser
         webbrowser.open(README.CHANGELOG_HTML)
+
+
+    ###################
+    # Audio Functions #
+    ###################
+    def present_audio(self, audio, pres_level, **kwargs):
+        # Load audio
+        try:
+            self._create_audio_object(audio, **kwargs)
+        except audio_exceptions.InvalidAudioType as e:
+            messagebox.showerror(
+                title="Invalid Audio Type",
+                message="The audio type is invalid!",
+                detail=f"{e} Please provide a Path or ndarray object."
+            )
+            return
+        except audio_exceptions.MissingSamplingRate as e:
+            messagebox.showerror(
+                title="Missing Sampling Rate",
+                message="No sampling rate was provided!",
+                detail=f"{e} Please provide a Path or ndarray object."
+            )
+            return
+
+        # Play audio
+        self._play(pres_level)
+
+
+    def _create_audio_object(self, audio, **kwargs):
+        # Create audio object
+        try:
+            self.a = audiomodel.Audio(
+                audio=audio,
+                **kwargs
+            )
+        except FileNotFoundError:
+            messagebox.showerror(
+                title="File Not Found",
+                message="Cannot find the audio file!",
+                detail="Go to File>Session to specify a valid audio path."
+            )
+            self._show_session_dialog()
+            return
+        except audio_exceptions.InvalidAudioType:
+            raise
+        except audio_exceptions.MissingSamplingRate:
+            raise
+
+
+    def _play(self, pres_level):
+        """ Format channel routing, present audio and catch 
+            exceptions.
+        """
+        # Attempt to present audio
+        try:
+            self.a.play(
+                level=pres_level,
+                device_id=self.sessionpars['audio_device'].get(),
+                routing=self._format_routing(
+                    self.sessionpars['channel_routing'].get())
+            )
+        except audio_exceptions.InvalidAudioDevice as e:
+            print(e)
+            messagebox.showerror(
+                title="Invalid Device",
+                message="Invalid audio device! Go to Tools>Audio Settings " +
+                    "to select a valid audio device.",
+                detail = e
+            )
+            # Open Audio Settings window
+            self._show_audio_dialog()
+        except audio_exceptions.InvalidRouting as e:
+            print(e)
+            messagebox.showerror(
+                title="Invalid Routing",
+                message="Speaker routing must correspond with the " +
+                    "number of channels in the audio file! Go to " +
+                    "Tools>Audio Settings to update the routing.",
+                detail=e
+            )
+            # Open Audio Settings window
+            self._show_audio_dialog()
+        except audio_exceptions.Clipping:
+            print("controller: Clipping has occurred! Aborting!")
+            messagebox.showerror(
+                title="Clipping",
+                message="The level is too high and caused clipping.",
+                detail="The waveform will be plotted when this message is " +
+                    "closed for visual inspection."
+            )
+            self.a.plot_waveform("Clipped Waveform")
+
+
+    def stop_audio(self):
+        try:
+            self.a.stop()
+        except AttributeError:
+            print("\ncontroller: Stop called, but there is no audio object!")
+
+
+    def _format_routing(self, routing):
+        """ Convert space-separated string to list of ints
+            for speaker routing.
+        """
+        routing = routing.split()
+        routing = [int(x) for x in routing]
+
+        return routing
 
 
 if __name__ == "__main__":

@@ -1,5 +1,4 @@
-""" Model for storing session parameters 
-"""
+""" Model for storing session parameters. """
 
 ############
 # IMPORTS  #
@@ -72,8 +71,7 @@ class SessionParsModel:
 
 
     def load(self):
-        """ Attempt to load session parameters from file
-        """
+        """ Attempt to load session parameters from file. """
         # If the file doesn't exist, abort
         print("\nsessionmodel: Checking for parameter file...")
         if not self.filepath.exists():
@@ -102,8 +100,7 @@ class SessionParsModel:
 
 
     def save(self):
-        """ Save current session parameters to file 
-        """
+        """ Save current session parameters to file. """
         # Write to JSON file
         #print("sessionmodel: Writing session pars from model to file...")
         with open(self.filepath, 'w') as fh:
@@ -111,8 +108,7 @@ class SessionParsModel:
 
 
     def set(self, key, value):
-        """ Set a variable value.
-        """
+        """ Set a variable value. """
         #print("sessionmodel: Setting sessionpars model " +
         #    "fields with running vals...")
         if (
