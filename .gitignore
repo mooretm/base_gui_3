@@ -1,0 +1,10 @@
+__pycache__
+Data/
+*.csv
+*.wav
+*.doc
+*.docx
+audio_stuff.py
+filehandler.py
+output/
+venv/

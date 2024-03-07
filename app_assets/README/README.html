@@ -1,0 +1,57 @@
+<h1><strong>Yes/No Task Controller</strong></h1>
+<ul>
+<li>Written by: <strong>Travis M. Moore</strong></li>
+<li>Latest version: <strong>Version 0.0.0</strong></li>
+<li>Created: <strong>July 14, 2023</strong></li>
+<li>Last edited: <strong>July 19, 2023</strong>
+<br>
+<br></li>
+</ul>
+<hr />
+<h2>Description</h2>
+<p>This controller is a simple yes/no presenter; it is not adaptive. Responses can be collected using a numberpad and/or on-screen buttons. Responses are categorized as signal detection proportions (i.e., hits, misses, false alarms, correct rejections) to aid in data analysis.
+<br>
+<br></p>
+<hr />
+<h2>Getting Started</h2>
+<h3>Dependencies</h3>
+<ul>
+<li>Windows 10 or greater (not compatible with Mac OS)</li>
+</ul>
+<h3>Installing</h3>
+<ul>
+<li>This is a compiled app; the executable file is stored on Starfile at: \starfile\Public\Temp\MooreT\Custom Software</li>
+<li>Simply copy the executable file and paste to a location on the local machine</li>
+</ul>
+<h3>First Use</h3>
+<ul>
+<li>Double-click to start the application for the first time.
+<br>
+<br></li>
+</ul>
+<hr />
+<h2>Tools Menu</h2>
+<h3>Audio Settings</h3>
+<p>The Audio Settings window allows you to select an audio device and assign speakers for playback. </p>
+<p><b>Device Selection.</b> The Audio Settings window displays available audio devices in a table (see lower part of image below). Simply click to choose the desired device. Your selection will be highlighted in blue. </p>
+<p><b>Speaker Assignment.</b> To assign a speaker for playback, enter the speaker/channel number in the entry box (see upper part of image below). Note that you must provide a speaker for each channel in the audio file. For example, if your stimulus has eight channels, you must provide a list of eight speakers. Separate numbers with spaces when providing a list of speakers. For example: <code>1 2 3 4 5 6 7 8</code>.</p>
+<p><img src="audio_settings.png" alt="Audio Settings Window" width="500"/></p>
+<h3>Calibration</h3>
+<p>The Calibration window provides a simple way to calibrate your stimuli using a sound level meter (SLM). </p>
+<p><b>Calibration Stimulus.</b> You can choose to use the built-in white noise, or provide a custom file for the calibration signal (top group in image below).</p>
+<p><b>Playback Controls.</b> Use the "Level (dB)" entry box to adjust the playback level in dB FS (middle group in image below). The "Play" and "Stop" buttons allow you to start and stop the audio playback.</p>
+<p><b>Measured Level.</b> Use a SLM to measure the level of the calibration signal and enter the SLM reading into the "SLM Reading (dB)" entry box (bottom group in image below). Click submit, and the application will calculate an offset so that you can specify presentation levels in dB (whichever type of dB you set the SLM to when measuring). Note that the "Submit" button is disabled until you click the "Play" button.</p>
+<p><img src="calibration.png" alt="Calibration Window" width="400"/>
+<br>
+<br></p>
+<hr />
+<h2>Compiling from Source</h2>
+<p><code>pyinstaller...</code>
+<br>
+<br></p>
+<hr />
+<h2>Contact</h2>
+<p>Please use the contact information below to submit bug reports, feature requests and any other feedback.</p>
+<ul>
+<li>Travis M. Moore: travis_moore@starkey.com</li>
+</ul>
